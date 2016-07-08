@@ -5,14 +5,8 @@ open System
 open System.IO
 open System.Text.RegularExpressions
 open Fake
-let libDir  = "./lib/bin/Debug/"
-let testDir   = "./tests/bin/Debug/"
-
-let appReferences  = 
-    !! "lib/*.fsproj" 
-
-let testReferences = 
-    !! "tests/*.fsproj"
+let libDir  = "./FSharp.Results/bin/Debug/"
+let testDir   = "./Tests/bin/Debug/"
 
 let solutionFile  = "FSharp.Results.sln"
 
@@ -29,7 +23,7 @@ Target "build_release" (fun _ ->
 )
 
 Target "test" (fun _ ->  
-    !! (testDir + "/Tests*.dll")
+    !! (Path.Combine(testDir, "*Tests*.dll"))
         |> NUnit (fun p -> 
             {p with
                 DisableShadowCopy = true; 
