@@ -4,7 +4,6 @@ open System
 open NUnit.Framework
 open FSharp.Results
 open Result
-open FsUnit
 open Helpers
 
 type EmailValidation=
@@ -23,7 +22,7 @@ let validateEmail =
 
 let testValidateEmail email (expected:Result<string,EmailValidation>) =
     let actual = validateEmail email
-    expected |> should equal actual
+    Assert.AreEqual(expected,actual)
 
 [<Test>]
 let ``Can chain together successive validations``() =
@@ -36,12 +35,10 @@ let ``Can chain together successive validations``() =
 let ``mapError if Ok should not modify result`` () =
     Ok 42
     |> mapError (fun _ -> ["err1"])
-    |> shouldBeOk
-    |> should equal 42
+    |> shouldBeOk 42
 
 [<Test>]
 let ``mapError if Error should map over error`` () =
     Error "error"
     |> mapError (fun _ -> [42])
-    |> shouldBeError
-    |> should equal [42]
+    |> shouldBeError [42]

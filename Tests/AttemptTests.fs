@@ -5,7 +5,6 @@ open System
 open NUnit.Framework
 open FSharp.Results
 open Result
-open FsUnit
 open Helpers
 open ClubbedToDeath
 
@@ -16,11 +15,11 @@ let Ruby = { Person.Gender = Female; Age = 25; Clothes = set ["High heels"]; Sob
 
 [<Test>]
 let part1() =
-    ClubbedToDeath.costToEnter Dave |> shouldBeError |> should equal "Too old!"
-    ClubbedToDeath.costToEnter Ken |> shouldBeOk |> should equal 5m
-    ClubbedToDeath.costToEnter Ruby |> shouldBeOk |> should equal 0m
-    ClubbedToDeath.costToEnter { Ruby with Age = 17 } |> shouldBeError|> should equal "Too young!"
-    ClubbedToDeath.costToEnter { Ken with Sobriety = Unconscious } |> shouldBeError|> should equal "Sober up!"
+    ClubbedToDeath.costToEnter Dave |> shouldBeError "Too old!"
+    ClubbedToDeath.costToEnter Ken |> shouldBeOk 5m
+    ClubbedToDeath.costToEnter Ruby |> shouldBeOk 0m
+    ClubbedToDeath.costToEnter { Ruby with Age = 17 } |> shouldBeError "Too young!"
+    ClubbedToDeath.costToEnter { Ken with Sobriety = Unconscious } |> shouldBeError "Sober up!"
 
 
 [<Test>]
@@ -31,7 +30,7 @@ let ``Using CE syntax should be equivilent to bind`` () =
             let greeting = sprintf "Hello %s" bob
             return greeting
         }
-    sut |> shouldBeOk |> should equal (sprintf "Hello %s" "bob")
+    sut |> shouldBeOk (sprintf "Hello %s" "bob")
 
 [<Test>]
 let ``Try .. with works in CE syntax`` () =
@@ -44,7 +43,7 @@ let ``Try .. with works in CE syntax`` () =
                 with
                 | e -> e.Message
         }
-    sut |> shouldBeOk |> should equal "bang"
+    sut |> shouldBeOk "bang"
 
 [<Test>]
 let ``Try .. finally works in CE syntax`` () =
@@ -60,4 +59,4 @@ let ``Try .. finally works in CE syntax`` () =
     | e -> Ok 
     |> ignore
 
-    !i |> should equal 1
+    Assert.AreEqual(1, !i )

@@ -4,7 +4,6 @@ open System
 open NUnit.Framework
 open FSharp.Results
 open Result
-open FsUnit
 open Helpers
 
 type Request = 
@@ -39,24 +38,21 @@ let ``should find empty name``() =
     { Name = ""
       EMail = "" }
     |> combinedValidation
-    |> shouldBeError
-    |> should equal "Name must not be blank" 
+    |> shouldBeError "Name must not be blank" 
 
 [<Test>]
 let ``should find empty mail``() = 
     { Name = "Scott"
       EMail = "" }
     |> combinedValidation
-    |> shouldBeError
-    |> should equal "Email must not be blank" 
+    |> shouldBeError "Email must not be blank" 
 
 [<Test>]
 let ``should find long name``() = 
     { Name = "ScottScottScottScottScottScottScottScottScottScottScottScottScottScottScottScottScottScottScott"
       EMail = "" }
     |> combinedValidation
-    |> shouldBeError
-    |> should equal "Name must not be longer than 50 chars" 
+    |> shouldBeError "Name must not be longer than 50 chars" 
 
 [<Test>]
 let ``should not complain on valid data``() = 
@@ -65,8 +61,7 @@ let ``should not complain on valid data``() =
           EMail = "scott@chessie.com" }
     scott
     |> combinedValidation
-    |> returnOrFail
-    |> should equal scott
+    |> shouldBeOk scott
 
 let canonicalizeEmail input = { input with EMail = input.EMail.Trim().ToLower() }
 
@@ -79,14 +74,12 @@ let ``should canonicalize valid data``() =
     { Name = "Scott"
       EMail = "SCOTT@CHESSIE.com" }
     |> usecase
-    |> returnOrFail
-    |> should equal ({ Name = "Scott"; EMail = "scott@chessie.com" })
+    |> shouldBeOk ({ Name = "Scott"; EMail = "scott@chessie.com" })
 
 [<Test>]
 let ``should not canonicalize invalid data``() = 
     { Name = ""
       EMail = "SCOTT@CHESSIE.com" }
     |> usecase
-    |> shouldBeError
-    |> should equal "Name must not be blank"
+    |> shouldBeError "Name must not be blank"
 
