@@ -1,36 +1,47 @@
-﻿namespace Tests
-
+﻿module Tests.ResultTests
 
 open System
 open NUnit.Framework
+open FSharp.Results
+open Result
+open FsUnit
+open Helpers
 
 type EmailValidation=
-    | Empty
+    | EmptyEmail
     | NoAt
 
-open FSharp.Results
-open Results
+let failIfEmpty email=
+    if String.IsNullOrEmpty(email) then Error EmptyEmail else Ok email
 
-[<TestFixture>]
-type ResultTests() =
+let failIfNotAt (email:string)=
+    if (email.Contains("@")) then Ok email else Error NoAt
 
-    let fail_if_empty email=
-        if String.IsNullOrEmpty(email) then Error Empty else Ok email
+let validateEmail =
+    failIfEmpty
+    >> bind failIfNotAt
 
-    let fail_if_not_at (email:string)=
-        if (email.Contains("@")) then Ok email else Error NoAt
+let testValidateEmail email (expected:Result<string,EmailValidation>) =
+    let actual = validateEmail email
+    expected |> should equal actual
 
-    let validate_email =
-        fail_if_empty
-        >> bind fail_if_not_at
-
-    let test_validate_email email (expected:Result<string,EmailValidation>) =
-        let actual = validate_email email
-        Assert.AreEqual(expected, actual)
+[<Test>]
+let ``Can chain together successive validations``() =
+    testValidateEmail "" (Error EmptyEmail)
+    testValidateEmail "something_else" (Error NoAt)
+    testValidateEmail "some@email.com" (Ok "some@email.com")
 
 
-    [<Test>]
-    member this.CanChainTogetherSuccessiveValidations() =
-        test_validate_email "" (Error Empty)
-        test_validate_email "something_else" (Error NoAt)
-        test_validate_email "some@email.com" (Ok "some@email.com")
+[<Test>]
+let ``mapError if Ok should not modify result`` () =
+    Ok 42
+    |> mapError (fun _ -> ["err1"])
+    |> shouldBeOk
+    |> should equal 42
+
+[<Test>]
+let ``mapError if Error should map over error`` () =
+    Error "error"
+    |> mapError (fun _ -> [42])
+    |> shouldBeError
+    |> should equal [42]
