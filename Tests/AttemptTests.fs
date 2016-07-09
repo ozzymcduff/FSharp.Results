@@ -56,7 +56,23 @@ let ``Try .. finally works in CE syntax`` () =
                 i := 1
         }
     with
-    | e -> Ok 
+    | e -> Ok () 
     |> ignore
 
     Assert.AreEqual(1, !i )
+
+
+type ApiError=
+    | FailedToConnect
+    | CouldNotFindProduct
+type Product = { Cost:float; Name:string }
+let getProductById pid : Result<Product,ApiError> = failwith "!"
+let minByCost a b = failwith "!"
+
+let calcDiscountTotal1 prod1Id prod2Id discount : Result<float, ApiError> =
+  attempt {
+    let! product1 = getProductById prod1Id
+    let! product2 = getProductById prod2Id 
+    let (c1, c2) = minByCost product1 product2
+    return (c1 - (discount / 100.0 * c1) + c2)
+  }

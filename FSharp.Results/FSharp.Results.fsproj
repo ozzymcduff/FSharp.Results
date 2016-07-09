@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -16,19 +16,16 @@
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <ConsolePause>false</ConsolePause>
-    <PlatformTarget>
-    </PlatformTarget>
+    <PlatformTarget></PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
+    <DefineConstants></DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <ConsolePause>false</ConsolePause>
     <GenerateTailCalls>true</GenerateTailCalls>
-    <PlatformTarget>
-    </PlatformTarget>
+    <PlatformTarget></PlatformTarget>
   </PropertyGroup>
   <PropertyGroup>
     <FSharpTargetsPath>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets</FSharpTargetsPath>
@@ -43,6 +40,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Result.fs" />
+    <Compile Include="ResultModule.fsi" />
     <Compile Include="ResultModule.fs" />
   </ItemGroup>
   <ItemGroup>
