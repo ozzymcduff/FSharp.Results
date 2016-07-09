@@ -1,8 +1,9 @@
 source https://www.nuget.org/api/v2
 framework >= net45
 
-nuget FSharp.Core 4.0.0.1
-nuget NUnit 2.6.4
-nuget NUnit.Runners 2.6.4
-nuget FsUnit 1.4.1
+nuget FSharp.Core
+nuget NUnit
+nuget NUnit.Runners
+nuget NUnit.Console
+nuget FsUnit
 nuget FAKE

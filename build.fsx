@@ -5,6 +5,7 @@ open System
 open System.IO
 open System.Text.RegularExpressions
 open Fake
+open Fake.Testing
 let libDir  = "./FSharp.Results/bin/Debug/"
 let testDir   = "./Tests/bin/Debug/"
 
@@ -24,10 +25,10 @@ Target "build_release" (fun _ ->
 
 Target "test" (fun _ ->  
     !! (Path.Combine(testDir, "*Tests*.dll"))
-        |> NUnit (fun p -> 
+        |> NUnit3 (fun p -> 
             {p with
-                DisableShadowCopy = true; 
-                OutputFile = testDir + "TestResults.xml"})
+                ShadowCopy = false; 
+                ResultSpecs = [testDir + "TestResults.xml"]})
 )
 
 Target "pack" (fun _ ->
