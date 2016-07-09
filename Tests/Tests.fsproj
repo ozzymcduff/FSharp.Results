@@ -52,6 +52,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClubbedToDeath.fs" />
     <Compile Include="AttemptTests.fs" />
     <None Include="paket.references" />
   </ItemGroup>

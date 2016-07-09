@@ -7,55 +7,8 @@ open FSharp.Results
 open Result
 open FsUnit
 open Helpers
+open ClubbedToDeath
 
-
-type Sobriety = 
-    | Sober
-    | Tipsy
-    | Drunk
-    | Paralytic
-    | Unconscious
-
-type Gender = 
-    | Male
-    | Female
-
-type Person = 
-    { Gender : Gender
-      Age : int
-      Clothes : string Set
-      Sobriety : Sobriety }
-
-// Let's define the checks that *all* nightclubs make!
-module Club = 
-    let checkAge (p : Person) = 
-        if p.Age < 18 then Error "Too young!"
-        elif p.Age > 40 then Error "Too old!"
-        else Ok p
-    
-    let checkClothes (p : Person) = 
-        if p.Gender = Male && not (p.Clothes.Contains "Tie") then Error "Smarten up!"
-        elif p.Gender = Female && p.Clothes.Contains "Trainers" then Error "Wear high heels"
-        else Ok p
-    
-    let checkSobriety (p : Person) = 
-        match p.Sobriety with
-        | Drunk | Paralytic | Unconscious -> Error "Sober up!"
-        | _ -> Ok p
-
-module ClubbedToDeath =
-    open Club
-    
-    let costToEnter p =
-        attempt {
-            let! a = checkAge p
-            let! b = checkClothes a
-            let! c = checkSobriety b
-            return 
-                match c.Gender with
-                | Female -> 0m
-                | Male -> 5m
-        }
 
 let Ken = { Person.Gender = Male; Age = 28; Clothes = set ["Tie"; "Shirt"]; Sobriety = Tipsy }
 let Dave = { Person.Gender = Male; Age = 41; Clothes = set ["Tie"; "Jeans"]; Sobriety = Sober }
@@ -69,3 +22,42 @@ let part1() =
     ClubbedToDeath.costToEnter { Ruby with Age = 17 } |> shouldBeError|> should equal "Too young!"
     ClubbedToDeath.costToEnter { Ken with Sobriety = Unconscious } |> shouldBeError|> should equal "Sober up!"
 
+
+[<Test>]
+let ``Using CE syntax should be equivilent to bind`` () =
+    let sut =
+        attempt {
+            let! bob = Ok "bob"
+            let greeting = sprintf "Hello %s" bob
+            return greeting
+        }
+    sut |> shouldBeOk |> should equal (sprintf "Hello %s" "bob")
+
+[<Test>]
+let ``Try .. with works in CE syntax`` () =
+    let sut =
+        attempt {
+            return
+                try
+                    failwith "bang"
+                    "not bang"
+                with
+                | e -> e.Message
+        }
+    sut |> shouldBeOk |> should equal "bang"
+
+[<Test>]
+let ``Try .. finally works in CE syntax`` () =
+    let i = ref 0
+    try
+        attempt {
+            try
+                failwith "bang"
+            finally
+                i := 1
+        }
+    with
+    | e -> Ok 
+    |> ignore
+
+    !i |> should equal 1
