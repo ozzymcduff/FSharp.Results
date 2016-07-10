@@ -14,12 +14,11 @@ module Result =
   [<CompiledName("Bind")>]
   let bind f inp = match inp with Error e -> Error e | Ok x -> f x
 
-  [<CompiledName("Apply")>]
-  let apply fOpt xOpt = 
-    match fOpt,xOpt with
-    | Ok f, Ok x -> Ok (f x)
-    | Error e, _-> Error e
-    | _, Error e -> Error e
+  [<CompiledName("Attempt")>]
+  let attempt f = 
+      try
+        Ok (f())
+      with e -> Error e
 
   type ResultBuilder () =
     member __.Zero () = Error() // is this correct?
@@ -39,4 +38,4 @@ module Result =
       finally
         handler ()
 
-  let attempt = ResultBuilder()
+  let trial = ResultBuilder()

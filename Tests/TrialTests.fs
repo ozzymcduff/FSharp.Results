@@ -25,7 +25,7 @@ let part1() =
 [<Test>]
 let ``Using CE syntax should be equivilent to bind`` () =
     let sut =
-        attempt {
+        trial {
             let! bob = Ok "bob"
             let greeting = sprintf "Hello %s" bob
             return greeting
@@ -35,7 +35,7 @@ let ``Using CE syntax should be equivilent to bind`` () =
 [<Test>]
 let ``Try .. with works in CE syntax`` () =
     let sut =
-        attempt {
+        trial {
             return
                 try
                     failwith "bang"
@@ -49,7 +49,7 @@ let ``Try .. with works in CE syntax`` () =
 let ``Try .. finally works in CE syntax`` () =
     let i = ref 0
     try
-        attempt {
+        trial {
             try
                 failwith "bang"
             finally
@@ -70,7 +70,7 @@ let getProductById pid : Result<Product,ApiError> = failwith "!"
 let minByCost a b = failwith "!"
 
 let calcDiscountTotal1 prod1Id prod2Id discount : Result<float, ApiError> =
-  attempt {
+  trial {
     let! product1 = getProductById prod1Id
     let! product2 = getProductById prod2Id 
     let (c1, c2) = minByCost product1 product2

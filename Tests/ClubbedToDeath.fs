@@ -38,7 +38,7 @@ module Club =
 
 open Club
 let costToEnter p =
-    attempt {
+    trial {
         let! a = checkAge p
         let! b = checkClothes a
         let! c = checkSobriety b

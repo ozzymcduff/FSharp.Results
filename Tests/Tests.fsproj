@@ -44,7 +44,7 @@
     <Compile Include="ResultTests.fs" />
     <Compile Include="SimpleValidation.fs" />
     <Compile Include="ClubbedToDeath.fs" />
-    <Compile Include="AttemptTests.fs" />
+    <Compile Include="TrialTests.fs" />
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>

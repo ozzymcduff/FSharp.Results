@@ -13,8 +13,8 @@ module Result =
   [<CompiledName("Bind")>]
   val bind: ('T -> Result<'U, 'TError>) -> Result<'T, 'TError> -> Result<'U, 'TError>
 
-  [<CompiledName("Apply")>]
-  val apply: Result<('T->'U),'TError> -> Result<'T,'TError> -> Result<'U,'TError>
+  [<CompiledName("Attempt")>]
+  val attempt : (unit -> 'a) -> Result<'a,exn>
 
   [<Class>]
   type ResultBuilder =
@@ -27,5 +27,5 @@ module Result =
     member TryWith : (unit->'T)*(exn->'T)-> 'T
     member TryFinally : (unit->'T)*(unit->unit)-> 'T
 
-  val attempt : ResultBuilder
+  val trial : ResultBuilder
 
