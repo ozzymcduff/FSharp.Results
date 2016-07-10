@@ -1,4 +1,4 @@
-﻿module Tests.AttemptTests
+﻿module Tests.TrialTests
 
 
 open System
