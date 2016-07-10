@@ -16,6 +16,10 @@ module Result =
   [<CompiledName("Attempt")>]
   val attempt : (unit -> 'a) -> Result<'a,exn>
 
+  //E<(a->b)> -> E<a> -> E<b>
+  [<CompiledName("Apply")>]
+  val apply: (Result<'T->'U, 'TError>) -> Result<'T, 'TError> -> Result<'U, 'TError>
+
   [<Class>]
   type ResultBuilder =
     member Zero : unit->Result<unit,unit>
@@ -30,4 +34,3 @@ module Result =
     member While : (unit->bool) * (unit->Result<unit,'TError>) -> Result<unit, 'TError>
 
   val trial : ResultBuilder
-
