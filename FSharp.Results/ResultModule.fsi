@@ -18,7 +18,7 @@ module Result =
 
   [<Class>]
   type ResultBuilder =
-    member Zero : unit->Result<_,unit>
+    member Zero : unit->Result<unit,unit>
     member Bind : (Result<'T,'TError>) * ('T->Result<'U,'TError>) -> Result<'U,'TError>
     member Return : 'T -> Result<'T,_>
     member ReturnFrom : 'T -> 'T
@@ -26,6 +26,8 @@ module Result =
     member Run : (unit->'T) -> 'T
     member TryWith : (unit->'T)*(exn->'T)-> 'T
     member TryFinally : (unit->'T)*(unit->unit)-> 'T
+    member Using : ('T :> System.IDisposable) * ('T -> Result<'U,'TError>) -> Result<'U,'TError>
+    member While : (unit->bool) * (unit->Result<unit,'TError>) -> Result<unit, 'TError>
 
   val trial : ResultBuilder
 
