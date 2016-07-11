@@ -27,20 +27,18 @@ module Result =
     member Bind : (Result<'T,'TError>) * ('T->Result<'U,'TError>) -> Result<'U,'TError>
     // member Return : 'a -> M<'a>
     member Return : 'T -> Result<'T,_>
+    [<CustomOperation("error")>]
+    member Error : 'T -> Result<_,'T>
 
     member ReturnFrom : Result<'T,'TError> -> Result<'T,'TError>
     //member Delay : (unit -> M<'a>) -> (unit -> M<'a>)
     member Delay : (unit->Result<'T,'TError>) -> (unit->Result<'T,'TError>)
     member Run : (unit->'T) -> 'T
-    //member TryWith : M<'a> -> M<'a> -> M<'a>
-    member TryWith : (unit->'T)*(exn->'T)-> 'T
+    //member TryWith : M<'T> * (exn -> M<'T>) -> M<'T>
+    member TryWith : (unit->Result<'T,'TError>)*(exn->Result<'T,'TError>)-> Result<'T,'TError>
     //member TryFinally : M<'a> -> M<'a> -> M<'a>
     member TryFinally : (unit->'T)*(unit->unit)-> 'T
     //member Using: 'a * ('a -> M<'b>) -> M<'b> when 'a :> IDisposable
     member Using : ('T :> System.IDisposable) * ('T -> Result<'U,'TError>) -> Result<'U,'TError>
-    //member While : (unit -> bool) * M<'a> -> M<'a>
-    member While : (unit->bool) * (unit->Result<unit,'TError>) -> Result<unit, 'TError>
-    //member For : seq<'a> * ('a -> M<'b>) -> M<'b>
-    //member For : (seq<'T>) * ('T->Result<'U,'TError>) -> Result<'U, 'TError>
-    
+
   val trial : ResultBuilder

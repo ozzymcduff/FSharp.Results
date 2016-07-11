@@ -36,12 +36,12 @@ let ``Using CE syntax should be equivilent to bind`` () =
 let ``Try .. with works in CE syntax`` () =
     let sut =
         trial {
-            return
+            return!
                 try
                     failwith "bang"
-                    "not bang"
+                    Error("not bang")
                 with
-                | e -> e.Message
+                | e -> Ok( e.Message)
         }
     sut |> shouldBeOk "bang"
 

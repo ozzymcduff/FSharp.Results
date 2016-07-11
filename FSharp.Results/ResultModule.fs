@@ -44,7 +44,7 @@ module Result =
     member __.ReturnFrom (v) : Result<'T, 'TError> = v
     member __.Delay (f : unit->Result<'T, 'TError>) = f
     member __.Run (f) = f()
-    member __.TryWith (body, handler) =
+    member __.TryWith (body:(unit->Result<'T,_>), handler) =
       try
         body ()
       with ex -> handler ex
@@ -63,38 +63,5 @@ module Result =
             if not <| isNull (box resource) then
                 resource.Dispose ()
 
-    // https://github.com/jack-pappas/ExtCore/blob/master/ExtCore/Control.fs#L925
-    // (unit -> bool) * M<'T> -> M<'T>
-    member this.While (guard, body : unit -> Result<unit, 'TError>) : Result<_,_> =
-        if guard () then
-            match body () with
-            | Ok () ->
-                this.While (guard, body)
-            | err -> err
-        else
-            // Return Ok () to indicate success when the loop
-            // finishes normally (because the guard returned false).
-            Ok ()
-
-    // https://github.com/jack-pappas/ExtCore/blob/master/ExtCore/Control.fs#L936
-    // seq<'T> * ('T -> M<'U>) -> M<'U>
-    // or
-    // seq<'T> * ('T -> M<'U>) -> seq<M<'U>>
-    member __.For (sequence : seq<_>, body : 'T -> Result<unit, 'TError>) =
-        use enumerator = sequence.GetEnumerator ()
-
-        let mutable errorResult = None
-        while enumerator.MoveNext () && Option.isNone errorResult do
-            match body enumerator.Current with
-            | Ok () -> ()
-            | error ->
-                errorResult <- Some error
-
-        // If we broke out of the loop early because the 'body' function
-        // returned an error for some element, return the error.
-        // Otherwise, return the 'zero' value (representing a 'success' which carries no value).
-        match errorResult with
-        | Some errorResult -> errorResult
-        | None -> Ok()
 
   let trial = ResultBuilder()
