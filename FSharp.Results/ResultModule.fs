@@ -18,8 +18,12 @@ module Result =
   let apply f x =
       match f,x with
       | Ok f, Ok x -> Ok (f x)
-      | Error e, _            -> Error e
-      | _           , Error e -> Error e
+      // why this patter? In order not to throw away information.
+      // having the same error type for f and x is also to restrictive
+      | Error e1, Error e2 -> Error (Some e1, Some e2)
+      | _       , Error e2 -> Error (None,Some e2)
+      | Error e1, _        -> Error (Some e1, None)
+
 
   [<CompiledName("Attempt")>]
   let attempt f =
@@ -37,8 +41,8 @@ module Result =
     /// Error operation. Similar to the Return method ('return'), but used for returning an error value.
     [<CustomOperation("error")>]
     member __.Error value : Result<'T, 'TError> = Error value
-    member __.ReturnFrom (v) = v
-    member __.Delay (f) = fun () -> f ()
+    member __.ReturnFrom (v) : Result<'T, 'TError> = v
+    member __.Delay (f : unit->Result<'T, 'TError>) = f
     member __.Run (f) = f()
     member __.TryWith (body, handler) =
       try

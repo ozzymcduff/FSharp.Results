@@ -18,19 +18,29 @@ module Result =
 
   //E<(a->b)> -> E<a> -> E<b>
   [<CompiledName("Apply")>]
-  val apply: (Result<'T->'U, 'TError>) -> Result<'T, 'TError> -> Result<'U, 'TError>
+  val apply: (Result<'T->'U, 'TFuncError>) -> Result<'T, 'TValueError> -> Result<'U, 'TFuncError option *'TValueError option>
 
   [<Class>]
   type ResultBuilder =
     member Zero : unit->Result<unit,unit>
+    // member Bind : M<'a> * ('a -> M<'b>) -> M<'b>
     member Bind : (Result<'T,'TError>) * ('T->Result<'U,'TError>) -> Result<'U,'TError>
+    // member Return : 'a -> M<'a>
     member Return : 'T -> Result<'T,_>
-    member ReturnFrom : 'T -> 'T
-    member Delay : (unit->'T) -> (unit->'T)
-    member Run : (unit->'T) -> 'T
-    member TryWith : (unit->'T)*(exn->'T)-> 'T
-    member TryFinally : (unit->'T)*(unit->unit)-> 'T
-    member Using : ('T :> System.IDisposable) * ('T -> Result<'U,'TError>) -> Result<'U,'TError>
-    member While : (unit->bool) * (unit->Result<unit,'TError>) -> Result<unit, 'TError>
 
+    member ReturnFrom : Result<'T,'TError> -> Result<'T,'TError>
+    //member Delay : (unit -> M<'a>) -> (unit -> M<'a>)
+    member Delay : (unit->Result<'T,'TError>) -> (unit->Result<'T,'TError>)
+    member Run : (unit->'T) -> 'T
+    //member TryWith : M<'a> -> M<'a> -> M<'a>
+    member TryWith : (unit->'T)*(exn->'T)-> 'T
+    //member TryFinally : M<'a> -> M<'a> -> M<'a>
+    member TryFinally : (unit->'T)*(unit->unit)-> 'T
+    //member Using: 'a * ('a -> M<'b>) -> M<'b> when 'a :> IDisposable
+    member Using : ('T :> System.IDisposable) * ('T -> Result<'U,'TError>) -> Result<'U,'TError>
+    //member While : (unit -> bool) * M<'a> -> M<'a>
+    member While : (unit->bool) * (unit->Result<unit,'TError>) -> Result<unit, 'TError>
+    //member For : seq<'a> * ('a -> M<'b>) -> M<'b>
+    //member For : (seq<'T>) * ('T->Result<'U,'TError>) -> Result<'U, 'TError>
+    
   val trial : ResultBuilder
