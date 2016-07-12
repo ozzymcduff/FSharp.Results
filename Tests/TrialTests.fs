@@ -61,6 +61,20 @@ let ``Try .. finally works in CE syntax`` () =
 
     Assert.AreEqual(1, !i )
 
+[<Test>]
+let ``Sample from fsharp for fun and profit`` () =
+    // not fully implemented, just trying things out
+    // 
+    let res = 
+        trial {
+            if 1<>1 then
+                yield! Ok "ok" 
+            else
+                //yield! Ok "happ"
+                yield! Error "ye"
+        }
+    res |> shouldBeError "ye"
+
 
 type ApiError=
     | FailedToConnect

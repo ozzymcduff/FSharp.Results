@@ -49,7 +49,7 @@ module Result =
         body ()
       with ex -> handler ex
 
-    member __.TryFinally (body, handler) =
+    member __.TryFinally (body : unit->Result<'T,'TError>, handler) =
       try
         body()
       finally
@@ -62,6 +62,34 @@ module Result =
         finally
             if not <| isNull (box resource) then
                 resource.Dispose ()
+    member __.Yield (v:'T) : Result<'T,'TError> = Ok v
+    member __.YieldFrom (v: Result<'T,'TError>): Result<'T,'TError> = v
+    member __.Combine (a: Result<'T,'TError>, b:Result<'T,'TError>) : Result<'T list,'TError list>= 
+        match a,b with
+        | Ok v1,Ok v2 -> Ok [v1;v2]
+        | Error e1,Error e2 -> Error [e1;e2]
+        | Error e1, _ -> Error [e1]
+        | _, Error e2 -> Error [e2]
 
+    member __.Combine (a: Result<'T list,'TError list>, b:Result<'T,'TError>) : Result<'T list,'TError list>= 
+        match a,b with
+        | Ok v1,Ok v2 -> Ok (v1@[v2])
+        | Error e1,Error e2 -> Error (e1@[e2])
+        | Error e1, _ -> Error e1
+        | _, Error e2 -> Error [e2]
+
+    member __.Combine (a: Result<'T,'TError>, b:Result<'T list,'TError list>) : Result<'T list,'TError list>= 
+        match a,b with
+        | Ok v1,Ok v2 -> Ok (v1::v2)
+        | Error e1,Error e2 -> Error (e1::e2)
+        | Error e1, _ -> Error [e1]
+        | _, Error e2 -> Error e2
+
+    member __.Combine (a: Result<'T list,'TError list>, b:Result<'T list,'TError list>) : Result<'T list,'TError list>= 
+        match a,b with
+        | Ok v1,Ok v2 -> Ok (v1@v2)
+        | Error e1,Error e2 -> Error (e1@e2)
+        | Error e1, _ -> Error e1
+        | _, Error e2 -> Error e2
 
   let trial = ResultBuilder()

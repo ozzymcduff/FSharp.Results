@@ -36,9 +36,18 @@ module Result =
     member Run : (unit->'T) -> 'T
     //member TryWith : M<'T> * (exn -> M<'T>) -> M<'T>
     member TryWith : (unit->Result<'T,'TError>)*(exn->Result<'T,'TError>)-> Result<'T,'TError>
-    //member TryFinally : M<'a> -> M<'a> -> M<'a>
-    member TryFinally : (unit->'T)*(unit->unit)-> 'T
+    //member TryFinally : M<'T> * (unit -> unit) -> M<'T>   
+    member TryFinally : (unit->Result<'T,'TError>)*(unit->unit)-> Result<'T,'TError>
     //member Using: 'a * ('a -> M<'b>) -> M<'b> when 'a :> IDisposable
     member Using : ('T :> System.IDisposable) * ('T -> Result<'U,'TError>) -> Result<'U,'TError>
+    //
+    member Yield :  'T -> Result<'T,'TError>
+    member YieldFrom : Result<'T,'TError> -> Result<'T,'TError>
+    member Combine : (Result<'T,'TError>)* (Result<'T,'TError>) -> Result<('T list),('TError list)>
+
+    member Combine : (Result<'T,'TError>)* (Result<'T list,'TError list>) -> Result<('T list),('TError list)>
+    member Combine : (Result<'T list,'TError list>)* (Result<'T,'TError>) -> Result<('T list),('TError list)>
+
+    member Combine : (Result<'T list,'TError list>)* (Result<'T list,'TError list>) -> Result<('T list),('TError list)>
 
   val trial : ResultBuilder
