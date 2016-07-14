@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />
+    <None Include="Script.fsx" />
   </ItemGroup>
   <Import Project="$(FSharpTargetsPath)" />
   <Choose>

@@ -18,11 +18,22 @@ let ``attempt with exception`` () =
 
 [<Test>]
 let ``attempt without exception`` () =
-    let doesNotFail ()= if 1<>1 then () else ()
+    let doesNotFail ()= ()
 
     let sut = attempt { 
         doesNotFail()
     }
     match sut with 
     | Ok _-> ()
+    | Error e ->Assert.Fail("Error")
+
+[<Test>]
+let ``attempt without exception and return value`` () =
+    let doesNotFail ()= 1
+
+    let sut = attempt<int> { 
+        return doesNotFail()
+    }
+    match sut with 
+    | Ok v-> Assert.AreEqual(1, v)
     | Error e ->Assert.Fail("Error")
