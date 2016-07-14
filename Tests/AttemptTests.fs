@@ -9,12 +9,20 @@ open Helpers
 
 [<Test>]
 let ``attempt with exception`` () =
-    let sut = attempt (fun ()->failwith "bang")
+    let sut = attempt { 
+        failwith "bang" 
+    }
     match sut with 
     | Ok _->Assert.Fail("Ok")
     | Error e ->Assert.AreEqual("bang", e.Message)
 
 [<Test>]
 let ``attempt without exception`` () =
-    let sut = attempt (fun ()->1)
-    sut |> shouldBeOk 1
+    let doesNotFail ()= if 1<>1 then () else ()
+
+    let sut = attempt { 
+        doesNotFail()
+    }
+    match sut with 
+    | Ok _-> ()
+    | Error e ->Assert.Fail("Error")

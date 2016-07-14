@@ -24,12 +24,18 @@ module Result =
       | _       , Error e2 -> Error (None,Some e2)
       | Error e1, _        -> Error (Some e1, None)
 
+  type AttemptBuilder () =
+    member __.Zero () : Result<unit,unit> = Ok()
+    member __.Bind (m , f) = bind f m
+    member __.Delay (f : unit->Result<'T, 'TError>) = f
+    member __.Run (f) = 
+        try
+            Ok( f())
+        with ex ->
+            Error ex
 
   [<CompiledName("Attempt")>]
-  let attempt f =
-      try
-        Ok (f())
-      with e -> Error e
+  let attempt = AttemptBuilder()
 
   type ResultBuilder () =
     // in https://github.com/jack-pappas/ExtCore/blob/master/ExtCore/Control.fs#L872 a Ok result is used

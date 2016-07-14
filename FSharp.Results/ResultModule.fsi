@@ -13,12 +13,15 @@ module Result =
   [<CompiledName("Bind")>]
   val bind: ('T -> Result<'U, 'TError>) -> Result<'T, 'TError> -> Result<'U, 'TError>
 
-  [<CompiledName("Attempt")>]
-  val attempt : (unit -> 'a) -> Result<'a,exn>
+  [<Class>]
+  type AttemptBuilder =
+    member Zero : unit->Result<unit,unit>
+    member Bind : (Result<'T,'TError>) * ('T->Result<'U,'TError>) -> Result<'U,'TError>
+    member Delay : (unit->Result<'T,'TError>) -> (unit->Result<'T,'TError>)
+    member Run : (unit->'T) -> Result<'T,exn>
 
-  //E<(a->b)> -> E<a> -> E<b>
-  [<CompiledName("Apply")>]
-  val apply: (Result<'T->'U, 'TFuncError>) -> Result<'T, 'TValueError> -> Result<'U, 'TFuncError option *'TValueError option>
+  [<CompiledName("Attempt")>]
+  val attempt : AttemptBuilder
 
   [<Class>]
   type ResultBuilder =
