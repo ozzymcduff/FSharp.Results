@@ -1,14 +1,14 @@
 ﻿namespace FSharp.Results
 
 open Microsoft.FSharp.Core.LanguagePrimitives.IntrinsicOperators
-type Attempt<'S> = (unit -> Result<'S,exn>)
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Attempt =
+    type Attempt<'S> = (unit -> Result<'S,exn>)
   
-    let internal succeed x = (fun () -> Ok x)
-    let internal failed err = (fun () -> Error err)
-    let runAttempt (a: Attempt<_>) = 
+    let private succeed x = (fun () -> Ok x)
+    let private failed err = (fun () -> Error err)
+    let private runAttempt (a: Attempt<_>) = 
         try
             a ()
         with exn->Error exn
@@ -63,4 +63,7 @@ module Attempt =
   
     [<CompiledName("Attempt")>]
     let attempt = AttemptBuilder()
-  
+
+    type Attempt =
+        [<CompiledName("Run")>]
+        static member run x = runAttempt x

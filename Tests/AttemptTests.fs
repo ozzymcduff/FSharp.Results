@@ -7,17 +7,15 @@ open FSharp.Results
 open Result
 open Helpers
 open Attempt
-let getExnMessage e=
-    (e :> exn).Message
 
 [<Test>]
 let ``attempt with exception`` () =
     let sut = attempt { 
         failwith "bang" 
     }
-    match runAttempt sut with 
+    match Attempt.run sut with 
     | Ok _->Assert.Fail("Ok")
-    | Error e ->Assert.AreEqual("bang", getExnMessage e)
+    | Error e ->Assert.AreEqual("bang", e.Message)
 
 [<Test>]
 let ``attempt without exception`` () =
@@ -26,7 +24,7 @@ let ``attempt without exception`` () =
     let sut = attempt { 
         doesNotFail()
     }
-    match runAttempt sut with 
+    match Attempt.run sut with 
     | Ok _-> ()
     | Error e ->Assert.Fail("Error")
 
@@ -37,6 +35,6 @@ let ``attempt without exception and return value`` () =
     let sut = attempt { 
         return doesNotFail()
     }
-    match runAttempt sut with 
+    match Attempt.run sut with 
     | Ok v-> Assert.AreEqual(1, v)
     | Error e ->Assert.Fail("Error")
