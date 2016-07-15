@@ -6,15 +6,18 @@ open NUnit.Framework
 open FSharp.Results
 open Result
 open Helpers
+open Attempt
+let getExnMessage e=
+    (e :> exn).Message
 
 [<Test>]
 let ``attempt with exception`` () =
     let sut = attempt { 
         failwith "bang" 
     }
-    match sut with 
+    match runAttempt sut with 
     | Ok _->Assert.Fail("Ok")
-    | Error e ->Assert.AreEqual("bang", e.Message)
+    | Error e ->Assert.AreEqual("bang", getExnMessage e)
 
 [<Test>]
 let ``attempt without exception`` () =
@@ -23,7 +26,7 @@ let ``attempt without exception`` () =
     let sut = attempt { 
         doesNotFail()
     }
-    match sut with 
+    match runAttempt sut with 
     | Ok _-> ()
     | Error e ->Assert.Fail("Error")
 
@@ -31,9 +34,9 @@ let ``attempt without exception`` () =
 let ``attempt without exception and return value`` () =
     let doesNotFail ()= 1
 
-    let sut = attempt<int> { 
+    let sut = attempt { 
         return doesNotFail()
     }
-    match sut with 
+    match runAttempt sut with 
     | Ok v-> Assert.AreEqual(1, v)
     | Error e ->Assert.Fail("Error")

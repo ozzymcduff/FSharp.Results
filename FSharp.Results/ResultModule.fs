@@ -14,50 +14,6 @@ module Result =
   [<CompiledName("Bind")>]
   let bind f inp = match inp with Error e -> Error e | Ok x -> f x
 
-  [<CompiledName("Apply")>]
-  let apply f x =
-      match f,x with
-      | Ok f, Ok x -> Ok (f x)
-      // why this patter? In order not to throw away information.
-      // having the same error type for f and x is also to restrictive
-      | Error e1, Error e2 -> Error (Some e1, Some e2)
-      | _       , Error e2 -> Error (None,Some e2)
-      | Error e1, _        -> Error (Some e1, None)
-
-  type AttemptBuilder<'T> () =
-    member __.Zero () : Result<unit,unit> = Ok()
-    member __.Bind (m , f) = bind f m
-    member __.Delay (f : unit->Result<'T, 'TError>) = f
-    member __.Run (f:unit->Result<'T,'TError>) : Result<'T,exn>=
-        try
-            match f() with
-            | Ok v->Ok v
-            | Error e->
-                failwith "Unexpected error"
-        with ex ->
-            Error ex
-
-    member __.Run (f:unit->Result<'T,exn>) : Result<'T,exn>=
-        try
-            match f() with
-            | Ok v->Ok v
-            | Error ex-> Error ex
-        with ex ->
-            Error ex
-
-    member __.Run (f:unit->'T) =
-        try
-            Ok( f())
-        with ex ->
-            Error ex
-    member __.Return (v:Result<'T,'TError>) =
-        v
-    member __.Return (v: 'T) =
-        Ok v
-
-  [<CompiledName("Attempt")>]
-  let attempt<'T> = AttemptBuilder<'T>()
-
   type ResultBuilder () =
     // in https://github.com/jack-pappas/ExtCore/blob/master/ExtCore/Control.fs#L872 a Ok result is used
     // see also: https://fsharpforfunandprofit.com/posts/computation-expressions-builder-part1/

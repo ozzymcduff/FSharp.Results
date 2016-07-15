@@ -44,6 +44,7 @@
     <Compile Include="ResultModule.fs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AttemptModule.fs" />
     <None Include="paket.references" />
     <None Include="Script.fsx" />
   </ItemGroup>
