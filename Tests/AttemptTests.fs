@@ -38,3 +38,14 @@ let ``attempt without exception and return value`` () =
     match Attempt.run sut with 
     | Ok v-> Assert.AreEqual(1, v)
     | Error e ->Assert.Fail("Error")
+
+[<Test>]
+let ``attempt with exception and return value`` () =
+    let doesFail () :int= failwith "bang"
+
+    let sut = attempt { 
+        return doesFail()
+    }
+    match Attempt.run sut with 
+    | Ok _->Assert.Fail("Ok")
+    | Error e ->Assert.AreEqual("bang", e.Message)
