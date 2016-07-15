@@ -15,11 +15,11 @@ let Ruby = { Person.Gender = Female; Age = 25; Clothes = set ["High heels"]; Sob
 
 [<Test>]
 let part1() =
-    ClubbedToDeath.costToEnter Dave |> shouldBeError "Too old!"
-    ClubbedToDeath.costToEnter Ken |> shouldBeOk 5m
-    ClubbedToDeath.costToEnter Ruby |> shouldBeOk 0m
-    ClubbedToDeath.costToEnter { Ruby with Age = 17 } |> shouldBeError "Too young!"
-    ClubbedToDeath.costToEnter { Ken with Sobriety = Unconscious } |> shouldBeError "Sober up!"
+    ClubbedToDeath.costToEnter Dave |> shouldBeErrorWithValue "Too old!"
+    ClubbedToDeath.costToEnter Ken |> shouldBeOkWithValue 5m
+    ClubbedToDeath.costToEnter Ruby |> shouldBeOkWithValue 0m
+    ClubbedToDeath.costToEnter { Ruby with Age = 17 } |> shouldBeErrorWithValue "Too young!"
+    ClubbedToDeath.costToEnter { Ken with Sobriety = Unconscious } |> shouldBeErrorWithValue "Sober up!"
 
 
 [<Test>]
@@ -30,7 +30,7 @@ let ``Using CE syntax should be equivilent to bind`` () =
             let greeting = sprintf "Hello %s" bob
             return greeting
         }
-    sut |> shouldBeOk (sprintf "Hello %s" "bob")
+    sut |> shouldBeOkWithValue (sprintf "Hello %s" "bob")
 
 [<Test>]
 let ``Try .. with works in CE syntax`` () =
@@ -43,7 +43,7 @@ let ``Try .. with works in CE syntax`` () =
                 with
                 | e -> Ok( e.Message)
         }
-    sut |> shouldBeOk "bang"
+    sut |> shouldBeOkWithValue "bang"
 
 [<Test>]
 let ``Try .. finally works in CE syntax`` () =

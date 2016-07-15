@@ -30,15 +30,56 @@ let ``Can chain together successive validations``() =
     testValidateEmail "something_else" (Error NoAt)
     testValidateEmail "some@email.com" (Ok "some@email.com")
 
+let addOneOk (v:int) = Ok (v+1)
+
+[<Test>]
+let ``bind should modify result Ok value`` () =
+    Ok 42
+    |> bind addOneOk
+    |> shouldBeOkWithValue 43
+
+[<Test>]
+let ``bind Error should not modify Error`` () =
+    Error "Error"
+    |> bind addOneOk
+    |> shouldBeErrorWithValue "Error"
+
+let toUpper (v:string) = v.ToUpper()
+
+[<Test>]
+let MapWillTransformOkValues() =
+    Ok "some@email.com" 
+    |> map toUpper
+    |> shouldBeOkWithValue "SOME@EMAIL.COM"
+
+[<Test>]
+let MapWillNotTransformErrorValues() =
+    Error "my error" 
+    |> map toUpper
+    |> shouldBeErrorWithValue "my error"
+
+[<Test>]
+let MapErrorWillTransformErrorValues() =
+    Error "my error" 
+    |> mapError toUpper
+    |> shouldBeErrorWithValue "MY ERROR"
+
+[<Test>]
+let MapErrorWillNotTransformOkValues() =
+    Ok "some@email.com" 
+    |> mapError toUpper
+    |> shouldBeOkWithValue "some@email.com"
+
+//
 
 [<Test>]
 let ``mapError if Ok should not modify result`` () =
     Ok 42
     |> mapError (fun _ -> ["err1"])
-    |> shouldBeOk 42
+    |> shouldBeOkWithValue 42
 
 [<Test>]
 let ``mapError if Error should map over error`` () =
     Error "error"
     |> mapError (fun _ -> [42])
-    |> shouldBeError [42]
+    |> shouldBeErrorWithValue [42]
