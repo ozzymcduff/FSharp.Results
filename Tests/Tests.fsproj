@@ -54,6 +54,7 @@
     <Compile Include="TrialTests.fs" />
     <Compile Include="AttemptTests.fs" />
     <None Include="paket.references" />
+    <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
