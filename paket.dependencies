@@ -1,6 +1,6 @@
 source https://www.nuget.org/api/v2
-framework >= net45
-
+redirects: force
+framework >= net47
 nuget FSharp.Core
 nuget NUnit.Runners
 nuget NUnit.Console
