@@ -24,26 +24,26 @@ module Club =
     let checkAge (p : Person) = 
         if p.Age < 18 then Error "Too young!"
         elif p.Age > 40 then Error "Too old!"
-        else Ok p
+        else Ok ()
     
     let checkClothes (p : Person) = 
         if p.Gender = Male && not (p.Clothes.Contains "Tie") then Error "Smarten up!"
         elif p.Gender = Female && p.Clothes.Contains "Trainers" then Error "Wear high heels"
-        else Ok p
+        else Ok ()
     
     let checkSobriety (p : Person) = 
         match p.Sobriety with
         | Drunk | Paralytic | Unconscious -> Error "Sober up!"
-        | _ -> Ok p
+        | _ -> Ok ()
 
 open Club
 let costToEnter p =
     trial {
-        let! a = checkAge p
-        let! b = checkClothes a
-        let! c = checkSobriety b
+        do! checkAge p
+        do! checkClothes p
+        do! checkSobriety p
         return 
-            match c.Gender with
+            match p.Gender with
             | Female -> 0m
             | Male -> 5m
     }
