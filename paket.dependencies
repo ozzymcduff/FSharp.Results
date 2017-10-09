@@ -2,7 +2,6 @@ source https://www.nuget.org/api/v2
 redirects: force
 framework >= net47
 nuget FSharp.Core
-nuget NUnit.Runners
-nuget NUnit.Console
-nuget NUnit
+nuget xunit.runner.console
 nuget FAKE
+nuget FsUnit.xUnit
