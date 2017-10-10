@@ -5,3 +5,4 @@ nuget FSharp.Core
 nuget xunit.runner.console
 nuget FAKE
 nuget FsUnit.xUnit
+nuget FSharp.Compiler.Service
