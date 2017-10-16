@@ -2,7 +2,7 @@
 
 open Microsoft.FSharp.Core.LanguagePrimitives.IntrinsicOperators
 
-//[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Result = 
   type ResultBuilder() = 
     // in https://github.com/jack-pappas/ExtCore/blob/master/ExtCore/Control.fs#L872 a Ok result is used
@@ -17,7 +17,7 @@ module Result =
     member __.Error value : Result<'T, 'TError> = Error value
     
     member __.ReturnFrom(v) : Result<'T, 'TError> = v
-    member __.Delay(f : unit -> Result<'T, 'TError>) = f
+    member __.Delay(f : unit -> Result<'T, 'TError>) =  f
     member __.Run(f) = f()
     
     member __.TryWith(body : unit -> Result<'T, _>, handler) = 
