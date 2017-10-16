@@ -2,7 +2,7 @@
 
 open Microsoft.FSharp.Core.LanguagePrimitives.IntrinsicOperators
 
-[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+//[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Result = 
   type ResultBuilder() = 
     // in https://github.com/jack-pappas/ExtCore/blob/master/ExtCore/Control.fs#L872 a Ok result is used
