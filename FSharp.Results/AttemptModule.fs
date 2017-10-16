@@ -4,13 +4,13 @@ open Microsoft.FSharp.Core.LanguagePrimitives.IntrinsicOperators
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Attempt =
-    type Attempt<'S> = (unit -> Result<'S,exn>)
+    type Attempt<'S> = { fn: (unit -> Result<'S,exn>) }
   
-    let private succeed x = (fun () -> Ok x)
-    let private failed err = (fun () -> Error err)
+    let private succeed x = ({fn= fun () -> Ok x })
+    let private failed err = ({fn=fun () -> Error err })
     let private runAttempt (a: Attempt<_>) = 
         try
-            a ()
+            a.fn ()
         with exn->Error exn
 
     let private either successTrack failTrack (input : Attempt<_>) : Attempt<_> =
@@ -18,11 +18,11 @@ module Attempt =
       | Ok s -> successTrack s
       | Error f -> failTrack f
     let private bind successTrack = either successTrack failed
-    let private delay f = (fun () -> f() |> runAttempt)
+    let private delay f = ({fn=fun () -> f() |> runAttempt})
   
     type AttemptBuilder() =
           member this.Bind(m : Attempt<_>, success) = bind success m
-          member this.Bind(m : Result<_, _>, success) = bind success (fun () -> m)
+          member this.Bind(m : Result<_, _>, success) = bind success ({ fn= fun () -> m })
           member this.Bind(m : Result<_, _> option, success) = 
               match m with
               | None -> this.Combine(this.Zero(), success)

@@ -1,8 +1,9 @@
 source https://www.nuget.org/api/v2
-framework >= net45
-
+redirects: force
+framework >= net46
 nuget FSharp.Core
-nuget NUnit.Runners
-nuget NUnit.Console
-nuget NUnit
+nuget xunit.runner.console
 nuget FAKE
+nuget FsUnit.xUnit
+nuget FSharp.Compiler.Service
+nuget FSharp.Compiler.Tools

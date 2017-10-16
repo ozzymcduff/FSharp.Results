@@ -7,3 +7,6 @@ install:
 
 script: 
     - sh build.sh test
+branches:
+  only: 
+    - master
